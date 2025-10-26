@@ -4,23 +4,19 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Auth0Provider } from "@auth0/auth0-react";
 import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
-import Callback from "./pages/Callback.jsx";   // new
+import Callback from "./pages/Callback.jsx"; // if your teammate adds it
+import Groups from "./pages/Groups.jsx";
+import GroupDetail from "./pages/GroupDetail.jsx";
 import "./index.css";
-
-import { registerSW } from "virtual:pwa-register";
-registerSW({ immediate: true }); // auto update when a new SW is available
-
-// Register service worker (ignore if unsupported)
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(console.error);
-  });
-}
+import SignUp from "./pages/SignUp.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
-  { path: "/dashboard", element: <Dashboard /> },   // we’ll protect inside the component
-  { path: "/callback", element: <Callback /> },     // landing after Auth0 redirect
+  { path: "/signup", element: <SignUp /> },   
+  { path: "/dashboard", element: <Dashboard /> },
+  { path: "/groups", element: <Groups /> },
+  { path: "/groups/:id", element: <GroupDetail /> },
+  { path: "/callback", element: <Callback /> }, // ok if file not present yet
 ]);
 
 const domain = import.meta.env.VITE_AUTH0_DOMAIN;
@@ -33,10 +29,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       clientId={clientId}
       authorizationParams={{
         redirect_uri: `${window.location.origin}/callback`,
-        audience: import.meta.env.VITE_AUTH0_AUDIENCE, // undefined is fine if you don’t use an API
+        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
         scope: "openid profile email",
       }}
-      cacheLocation="localstorage"  // keeps sessions across reloads; good for dev
+      cacheLocation="localstorage"
     >
       <RouterProvider router={router} />
     </Auth0Provider>
