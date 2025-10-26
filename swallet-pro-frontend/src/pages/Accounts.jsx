@@ -15,6 +15,21 @@ const currencyFmt = new Intl.NumberFormat("en", {
 });
 
 const formatCurrency = (value = 0) => currencyFmt.format((value || 0) / 100);
+const generateRandomAmount = () => {
+  const dollars = Math.floor(Math.random() * 90) + 10; // 10-99
+  const cents = Math.floor(Math.random() * 100);
+  return `${dollars.toString().padStart(2, "0")}.${cents.toString().padStart(2, "0")}`;
+};
+const decryptAccountName = (encrypted) => {
+  try {
+    const decrypted = CryptoJS.AES.decrypt(encrypted || "", "swallet-basic-key").toString(
+      CryptoJS.enc.Utf8
+    );
+    return decrypted || encrypted;
+  } catch {
+    return encrypted;
+  }
+};
 
 export default function Accounts() {
   const [accounts, setAccounts] = useState([]);
@@ -44,7 +59,11 @@ export default function Accounts() {
     setError("");
     try {
       const data = await accountsAPI.list();
-      setAccounts(data.accounts || []);
+      const normalizedAccounts = (data.accounts || []).map((acct) => ({
+        ...acct,
+        institution_name: decryptAccountName(acct.institution_name),
+      }));
+      setAccounts(normalizedAccounts);
       setTotals(data.totals || totals);
     } catch (err) {
       console.error("Failed to load accounts", err);
@@ -63,9 +82,40 @@ export default function Accounts() {
     setSubmitting(true);
     setError("");
     try {
+      const hasCoreFieldsFilled =
+        form.institution_name.trim().length > 0 &&
+        form.account_type &&
+        form.account_number_last4.trim().length === 4 &&
+        form.routing_number.trim().length > 0;
+
+      let autoBalance = form.balance;
+      let autoCredit = form.available_credit;
+
+      if (hasCoreFieldsFilled) {
+        if (!autoBalance) autoBalance = generateRandomAmount();
+        if (!autoCredit) autoCredit = generateRandomAmount();
+      }
+
+      const payload = {
+        ...form,
+        balance: autoBalance,
+        available_credit: autoCredit,
+      };
+
+      if (autoBalance !== form.balance || autoCredit !== form.available_credit) {
+        setForm((prev) => ({
+          ...prev,
+          balance: autoBalance,
+          available_credit: autoCredit,
+        }));
+      }
+
       // Basic encryption for account name
-      const encryptedName = CryptoJS.AES.encrypt(form.institution_name, "swallet-basic-key").toString();
-      await accountsAPI.create({ ...form, institution_name: encryptedName });
+      const encryptedName = CryptoJS.AES.encrypt(
+        payload.institution_name,
+        "swallet-basic-key"
+      ).toString();
+      await accountsAPI.create({ ...payload, institution_name: encryptedName });
       setForm({
         institution_name: "",
         account_type: "checking",
@@ -149,7 +199,7 @@ export default function Accounts() {
         </div>
         <form className="form-grid" onSubmit={handleSubmit}>
           <label className="form-field">
-            <span>Institution name</span>
+            <span>Bank Account name*</span>
             <input
               className="input"
               value={form.institution_name}
@@ -158,7 +208,7 @@ export default function Accounts() {
             />
           </label>
           <label className="form-field">
-            <span>Type</span>
+            <span>Type*</span>
             <select
               className="select"
               value={form.account_type}
@@ -172,7 +222,7 @@ export default function Accounts() {
             </select>
           </label>
           <label className="form-field">
-            <span>Last 4 digits</span>
+            <span>Last 4 digits*</span>
             <input
               className="input"
               value={form.account_number_last4}
@@ -184,7 +234,7 @@ export default function Accounts() {
             />
           </label>
           <label className="form-field">
-            <span>Routing (optional)</span>
+            <span>Routing*</span>
             <input
               className="input"
               value={form.routing_number}
@@ -192,7 +242,7 @@ export default function Accounts() {
             />
           </label>
           <label className="form-field">
-            <span>Current balance (USD)</span>
+            <span>Current balance</span>
             <input
               className="input"
               type="number"
@@ -321,4 +371,3 @@ export default function Accounts() {
     </div>
   );
 }
-
