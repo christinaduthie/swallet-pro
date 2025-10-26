@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { dashboardAPI } from "../api";
 import { useConversation } from '@elevenlabs/react';
+import CryptoJS from "crypto-js";
 
 async function elevenLabsTTS(text, apiKey) {
   const response = await fetch("https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL", {
@@ -139,6 +140,21 @@ export default function Dashboard() {
       setChatMessages(msgs => [...msgs, { sender: 'bot', text: 'Sorry, something went wrong.' }]);
     }
     setChatLoading(false);
+  }
+
+  async function createGroup(e) {
+    e.preventDefault();
+    try {
+      // Basic encryption for group name
+      const encryptedName = CryptoJS.AES.encrypt(name, "swallet-basic-key").toString();
+      const newGroup = await api.post("/groups", { name: encryptedName, currency });
+      setGroups([newGroup, ...groups]); // update UI instantly
+      setName("");
+      setCurrency("USD");
+    } catch (err) {
+      console.error("Error creating group:", err);
+      alert("Failed to create group.");
+    }
   }
 
   useEffect(() => {
