@@ -11,24 +11,25 @@ export default function Groups() {
 
   async function load() {
     try {
-      const data = await api.get("/api/groups");
+      const data = await api.get("/groups");
       setGroups(data);
     } catch (e) {
+      console.error(e);
       setErr("Failed to load groups");
     }
   }
 
   useEffect(() => { load(); }, []);
-
   async function createGroup(e) {
     e.preventDefault();
     setErr("");
     try {
-      const g = await api.post("/api/groups", form);
+      const g = await api.post("/groups", form);
       setShowNew(false);
       setForm({ name: "", currency: "USD" });
       nav(`/groups/${g.id}`);
     } catch (e) {
+      console.error(e);
       setErr("Failed to create group");
     }
   }
