@@ -1,7 +1,24 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from "../components/LogoutButton.jsx";
+
+async function elevenLabsTTS(text, apiKey) {
+  const response = await fetch("https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "xi-api-key": apiKey,
+    },
+    body: JSON.stringify({
+      text,
+      voice_settings: { stability: 0.5, similarity_boost: 0.5 },
+    }),
+  });
+  if (!response.ok) throw new Error("TTS failed");
+  const audioBlob = await response.blob();
+  return URL.createObjectURL(audioBlob);
+}
 
 const primaryNav = [
   { label: "Dashboard", to: "/dashboard", icon: "grid" },
@@ -114,6 +131,43 @@ function initialsFrom(name = "") {
 
 export default function AppLayout() {
   const { user } = useAuth0();
+  const [apiKey] = useState("sk_cfbc51c5e63ec30d18b3f310e1dfa1a4e13b407d6a6fd370");
+
+  // Add a ref to keep track of the current audio
+  const audioRef = React.useRef(null);
+
+  // Speak all visible text from the main app page
+  async function handleSpeak() {
+    // Get all visible text from the main app container
+    const appMain = document.querySelector('.app-main');
+    let pageText = '';
+    if (appMain) {
+      pageText = appMain.innerText || appMain.textContent || '';
+      pageText = pageText.trim().slice(0, 2000); // Increase limit for more content
+    }
+    if (!pageText) return;
+    try {
+      const url = await elevenLabsTTS(pageText, apiKey);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.play();
+    } catch (err) {
+      alert("TTS failed: " + err.message);
+    }
+  }
+
+  // Stop speaking
+  function handleStop() {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+  }
 
   return (
     <div className="app-shell">
@@ -178,8 +232,8 @@ export default function AppLayout() {
           </div>
 
           <div className="header-actions">
-            <button type="button" className="btn btn-primary btn-sm">Start</button>
-            <button type="button" className="btn btn-ghost btn-sm">Stop</button>
+            <button type="button" className="btn btn-primary btn-sm" onClick={handleSpeak}>Start</button>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={handleStop}>Stop</button>
             <div className="quick-links quick-links--icons">
               {quickLinks.map((link) => (
                 <Link key={link.to} to={link.to} className="quick-link">
