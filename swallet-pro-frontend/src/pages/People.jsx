@@ -113,42 +113,41 @@ export default function People() {
 
   return (
     <div className="page-stack">
-      <div className="card-grid card-grid--2">
-        <section className="card">
-          <div className="page-header-sm">
-            <div>
-              <p className="eyebrow">People</p>
-              <h2 style={{ margin: 0 }}>Trusted contacts</h2>
-              <p className="muted">
-                Save handles, toggles, and recent interactions for faster collaboration.
-              </p>
-            </div>
+      <section className="card">
+        <div className="page-header-sm">
+          <div>
+            <p className="eyebrow">People</p>
+            <h2 style={{ margin: 0 }}>Trusted contacts</h2>
+            <p className="muted">
+              Save handles, toggles, and recent interactions for faster collaboration.
+            </p>
           </div>
-          {error && <p style={{ color: "#f87171" }}>{error}</p>}
-          <div className="form-field" style={{ marginTop: "1rem" }}>
+        </div>
+        {error && <p style={{ color: "#f87171" }}>{error}</p>}
+        <div className="form-field" style={{ marginTop: "1rem" }}>
+          <input
+            className="input"
+            placeholder="Search contacts…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </section>
+
+      <section className="card">
+        <p className="eyebrow">Add contact</p>
+        <form className="form-grid" onSubmit={handleSubmit}>
+          <label className="form-field">
+            <span>Name</span>
             <input
               className="input"
-              placeholder="Search contacts…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={form.contact_name}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, contact_name: e.target.value }))
+              }
+              required
             />
-          </div>
-        </section>
-
-        <section className="card">
-          <p className="eyebrow">Add contact</p>
-          <form className="form-grid" onSubmit={handleSubmit}>
-            <label className="form-field">
-              <span>Name</span>
-              <input
-                className="input"
-                value={form.contact_name}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, contact_name: e.target.value }))
-                }
-                required
-              />
-            </label>
+          </label>
           <label className="form-field">
             <span>Email</span>
             <input
@@ -225,8 +224,7 @@ export default function People() {
             </button>
           </div>
         </form>
-        </section>
-      </div>
+      </section>
 
       <section className="card">
         <div className="page-header-sm">
