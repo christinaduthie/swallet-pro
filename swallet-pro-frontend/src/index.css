@@ -21,31 +21,6 @@
   --text-muted: rgba(255, 255, 255, 0.7);
 }
 
-/* Light theme variables and overrides */
-[data-theme="light"] {
-  --space-bg: #f8fafc;
-  --space-gradient: linear-gradient(180deg, #ffffff, #f8fafc);
-  --space-surface: #ffffff;
-  --space-panel: #ffffff;
-  --space-border: #e2e8f0;
-  --text-primary: #0f172a;
-  --text-muted: #475569;
-}
-
-/* Color Blind Mode (high-contrast, friendly palette) */
-[data-theme="colorblind"] {
-  --space-bg: #fff7cc; /* light yellow background for strong readability */
-  --space-gradient: linear-gradient(180deg, #fffdf0, #fff7cc);
-  --space-surface: #ffffff;
-  --space-panel: #ffffff;
-  --space-border: #334155; /* slate-700 */
-  --text-primary: #0b1f44; /* navy */
-  --text-muted: #1f2937; /* slate-800 */
-  --accent-primary: #0072b2; /* Okabe & Ito blue */
-  --accent-secondary: #e69f00; /* Okabe & Ito orange */
-  --accent-gold: #e69f00; /* use orange for clarity */
-}
-
 *,
 *::before,
 *::after {
@@ -163,24 +138,6 @@ p {
   color: rgba(255, 255, 255, 0.65);
 }
 
-[data-theme="light"] .sidebar__badge {
-  color: #64748b;
-}
-
-/* Add redundant striped cue for badges in color blind mode */
-[data-theme="colorblind"] .sidebar__badge {
-  color: #0b1f44;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(230, 159, 0, 0.25),
-    rgba(230, 159, 0, 0.25) 6px,
-    rgba(255, 255, 255, 0.25) 6px,
-    rgba(255, 255, 255, 0.25) 12px
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-
 .sidebar__constellation {
   display: flex;
   gap: 0.5rem;
@@ -240,33 +197,6 @@ p {
   color: #fff;
 }
 
-[data-theme="light"] .sidebar__link {
-  color: #0f172a;
-}
-[data-theme="light"] .sidebar__link.is-active {
-  background: #eef2ff;
-  color: #0f172a;
-  box-shadow: none;
-}
-[data-theme="light"] .sidebar__link:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-}
-
-/* Color blind mode: strong nav contrast on dark sidebar */
-[data-theme="colorblind"] .sidebar__link {
-  color: #e5e7eb;
-}
-[data-theme="colorblind"] .sidebar__link.is-active {
-  background: #e69f00; /* orange */
-  color: #0b1f44; /* navy text */
-  box-shadow: none;
-}
-[data-theme="colorblind"] .sidebar__link:hover {
-  background: #ffefb3; /* pale yellow */
-  color: #0b1f44;
-}
-
 .sidebar__footer {
   margin-top: auto;
   display: grid;
@@ -310,11 +240,6 @@ p {
     linear-gradient(120deg, rgba(201, 43, 152, 0.2), transparent), var(--space-bg);
 }
 
-[data-theme="colorblind"] .app-main {
-  /* Remove purple tints for clarity */
-  background: var(--space-bg);
-}
-
 .app-header {
   background: linear-gradient(115deg, rgba(80, 9, 120, 0.4), rgba(201, 43, 152, 0.15));
   border-bottom: 1px solid rgba(230, 183, 5, 0.2);
@@ -324,71 +249,6 @@ p {
   gap: 1.5rem;
   flex-wrap: wrap;
   color: var(--text-primary);
-}
-
-/* Light theme specific containers */
-[data-theme="light"] .sidebar {
-  background: #ffffff;
-  color: var(--text-primary);
-  border-right: 1px solid var(--space-border);
-}
-
-[data-theme="light"] .app-header {
-  background: #ffffff;
-  border-bottom: 1px solid var(--space-border);
-}
-
-[data-theme="light"] .card {
-  background: var(--space-panel);
-  border: 1px solid var(--space-border);
-  box-shadow: none;
-}
-
-[data-theme="light"] .quick-link {
-  background: #f8fafc;
-  border-color: var(--space-border);
-}
-
-[data-theme="light"] .stat-card {
-  background: #ffffff;
-}
-
-/* Color blind containers: light surfaces, dark borders */
-[data-theme="colorblind"] .sidebar {
-  background: #0b1f44; /* navy */
-  color: #ffffff;
-  border-right: 2px solid #334155;
-}
-
-[data-theme="colorblind"] .app-header {
-  background: #fff9d9; /* pale yellow */
-  border-bottom: 2px solid #334155;
-}
-
-[data-theme="colorblind"] .card {
-  background: var(--space-panel);
-  border: 2px solid var(--space-border);
-  box-shadow: none;
-}
-
-[data-theme="colorblind"] .quick-link {
-  background: #fff9d9;
-  border-color: var(--space-border);
-}
-
-[data-theme="colorblind"] .stat-card {
-  background: #ffffff;
-}
-
-/* Ghost button contrast overrides by theme */
-[data-theme="light"] .app-shell .btn-ghost {
-  color: #0f172a;
-  border-color: #cbd5e1;
-}
-
-[data-theme="colorblind"] .app-shell .btn-ghost {
-  color: #0b1f44;
-  border-color: #334155;
 }
 
 .header-primary {
@@ -406,14 +266,6 @@ p {
   letter-spacing: 0.25em;
   color: rgba(255, 255, 255, 0.6);
   margin-bottom: 0.35rem;
-}
-
-[data-theme="light"] .eyebrow {
-  color: #64748b;
-}
-
-[data-theme="colorblind"] .eyebrow {
-  color: #334155;
 }
 
 .header-actions {
@@ -434,11 +286,6 @@ p {
   gap: 0.75rem;
   flex-wrap: wrap;
   justify-content: flex-end;
-}
-
-/* Inside cards, align quick links to the left */
-.card .quick-links {
-  justify-content: flex-start;
 }
 
 .quick-links--icons {
@@ -469,60 +316,8 @@ p {
   color: #fff;
 }
 
-/* Ensure readable ghost buttons in light header */
-[data-theme="light"] .app-header .header-actions .btn-ghost {
-  color: #0f172a;
-  border-color: #cbd5e1;
-}
-
 .app-header .header-actions .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.08);
-}
-
-/* Header ghost button contrast for color blind mode */
-[data-theme="colorblind"] .app-header .header-actions .btn-ghost {
-  color: #0b1f44;
-  border-color: #334155;
-}
-[data-theme="colorblind"] .app-header .header-actions .btn-ghost:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-/* Make header action buttons more compact */
-.app-header .header-actions .btn.btn-sm {
-  /* Reduce height only: keep wide horizontal padding */
-  padding: 0.3rem 1.5rem;
-  font-size: 0.85rem;
-  line-height: 1;
-}
-
-/* Make header theme select match compact buttons */
-.app-header .header-actions .select {
-  width: auto;
-  padding: 0.3rem 2.2rem 0.3rem 0.8rem; /* space for arrow */
-  font-size: 0.85rem;
-  line-height: 1;
-  border-radius: 0.5rem;
-  border-color: rgba(255, 255, 255, 0.35);
-  background-color: transparent;
-}
-
-[data-theme="light"] .app-header .header-actions .select {
-  color: #0f172a;
-  border-color: #cbd5e1;
-}
-
-[data-theme="colorblind"] .app-header .header-actions .select {
-  color: #0b1f44;
-  border-color: #334155;
-}
-
-.app-header .header-actions .select:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-}
-
-[data-theme="colorblind"] .app-header .header-actions .select:hover {
-  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .quick-link {
@@ -572,46 +367,6 @@ p {
   gap: 1.5rem;
 }
 
-/* Generic grid for laying out multiple cards */
-.card-grid {
-  display: grid;
-  gap: 1.25rem;
-}
-
-.card-grid--2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-/* Stats layout: two-up on wider screens, stacks on small */
-.stat-grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.stat-card {
-  border: 1px solid var(--space-border);
-  border-radius: 0.9rem;
-  padding: 1.1rem 1.25rem;
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.stat-card h3 {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-  color: var(--text-muted);
-}
-
-@media (max-width: 720px) {
-  .card-grid--2,
-  .stat-grid {
-    grid-template-columns: 1fr;
-  }
-  .app-content {
-    padding: 1.4rem 1.2rem 2rem;
-  }
-}
-
 .card {
   background: var(--space-panel);
   border-radius: 1.2rem;
@@ -641,16 +396,6 @@ p {
 .form-field span {
   font-size: 0.85rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-/* Theme-specific label contrast */
-[data-theme="light"] .form-field label,
-[data-theme="light"] .form-field span {
-  color: #475569;
-}
-[data-theme="dark"] .form-field label,
-[data-theme="dark"] .form-field span {
   color: rgba(255, 255, 255, 0.8);
 }
 
@@ -703,62 +448,6 @@ button {
   color: var(--text-primary);
 }
 
-/* Light theme: ensure visible borders on form controls */
-[data-theme="light"] .input,
-[data-theme="light"] .select,
-[data-theme="light"] .textarea,
-[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]),
-[data-theme="light"] select:not(.select),
-[data-theme="light"] textarea:not(.textarea) {
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #0f172a;
-}
-
-[data-theme="light"] .input:focus,
-[data-theme="light"] .select:focus,
-[data-theme="light"] .textarea:focus,
-[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]):focus,
-[data-theme="light"] select:not(.select):focus,
-[data-theme="light"] textarea:not(.textarea):focus {
-  border-color: #818cf8;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25);
-}
-
-[data-theme="light"] input::placeholder,
-[data-theme="light"] textarea::placeholder {
-  color: #94a3b8;
-}
-
-/* High contrast form controls for color blind mode */
-[data-theme="colorblind"] .input,
-[data-theme="colorblind"] .select,
-[data-theme="colorblind"] .textarea,
-[data-theme="colorblind"] input:not([type="checkbox"]):not([type="radio"]),
-[data-theme="colorblind"] select:not(.select),
-[data-theme="colorblind"] textarea:not(.textarea) {
-  border: 2px solid #334155; /* stronger outlines */
-  background: #fffdf0;
-  color: #0b1f44;
-}
-
-[data-theme="colorblind"] .input:focus,
-[data-theme="colorblind"] .select:focus,
-[data-theme="colorblind"] .textarea:focus,
-[data-theme="colorblind"] input:not([type="checkbox"]):not([type="radio"]):focus,
-[data-theme="colorblind"] select:not(.select):focus,
-[data-theme="colorblind"] textarea:not(.textarea):focus {
-  border-color: #0072b2; /* blue focus */
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(0, 114, 178, 0.25);
-}
-
-[data-theme="colorblind"] input::placeholder,
-[data-theme="colorblind"] textarea::placeholder {
-  color: #334155;
-}
-
 .input,
 .select,
 .textarea,
@@ -767,7 +456,7 @@ select:not(.select),
 textarea:not(.textarea) {
   width: 100%;
   border-radius: 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 0.8rem 0.95rem;
   font-size: 0.95rem;
   background: rgba(255, 255, 255, 0.05);
@@ -790,68 +479,6 @@ textarea:not(.textarea):focus {
 input::placeholder,
 textarea::placeholder {
   color: rgba(255, 255, 255, 0.6);
-}
-
-/* Improved select appearance for dark/light themes */
-.select {
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-  padding-right: 2.2rem; /* space for chevron */
-  background-repeat: no-repeat;
-  background-position: right 0.8rem center;
-  background-size: 14px 14px;
-}
-
-/* Default (dark) chevron: light stroke */
-.select {
-  background-image: url("data:image/svg+xml;utf8,\
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
-      <path d='M6 8l4 4 4-4'/>\
-    </svg>");
-}
-
-/* Light theme chevron: dark stroke for contrast */
-[data-theme="light"] .select {
-  background-image: url("data:image/svg+xml;utf8,\
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23334155' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
-      <path d='M6 8l4 4 4-4'/>\
-    </svg>");
-}
-
-/* Dark theme subtle contrast improvements */
-[data-theme="dark"] .select {
-  border-color: rgba(255, 255, 255, 0.28);
-  background-color: rgba(255, 255, 255, 0.06);
-  color-scheme: dark;
-}
-
-.select:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-}
-
-/* Ensure dropdown options are legible */
-.select option {
-  background: #120323;
-  color: #fdf7ff;
-}
-
-[data-theme="light"] .select option {
-  background: #ffffff;
-  color: #0f172a;
-}
-
-/* Color blind theme select chevron and options */
-[data-theme="colorblind"] .select {
-  background-image: url("data:image/svg+xml;utf8,\
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%230b1f44' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
-      <path d='M6 8l4 4 4-4'/>\
-    </svg>");
-}
-
-[data-theme="colorblind"] .select option {
-  background: #fff9d9;
-  color: #0b1f44;
 }
 
 input:-webkit-autofill,
@@ -902,16 +529,6 @@ input[type="checkbox"] {
 
 .btn-primary:hover {
   background: linear-gradient(120deg, #d936a6, #62118c);
-}
-
-/* Color blind: high-contrast, hue-safe primary */
-[data-theme="colorblind"] .btn-primary {
-  background: linear-gradient(120deg, #005a90, #0072b2);
-  color: #ffffff;
-  box-shadow: 0 20px 30px rgba(0, 114, 178, 0.25);
-}
-[data-theme="colorblind"] .btn-primary:hover {
-  background: linear-gradient(120deg, #00639e, #0a83c9);
 }
 
 .btn-ghost {
@@ -993,36 +610,6 @@ input[type="checkbox"] {
   gap: 0.5rem;
 }
 
-/* Ensure form elements remain readable inside modals across themes */
-.modal-card .form-field label,
-.modal-card .form-field span {
-  color: var(--text-primary);
-}
-
-.modal-card .input,
-.modal-card .select,
-.modal-card .textarea {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--space-border);
-  color: var(--text-primary);
-}
-
-[data-theme="light"] .modal-card .input,
-[data-theme="light"] .modal-card .select,
-[data-theme="light"] .modal-card .textarea {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #0f172a;
-}
-
-[data-theme="colorblind"] .modal-card .input,
-[data-theme="colorblind"] .modal-card .select,
-[data-theme="colorblind"] .modal-card .textarea {
-  background: #fffdf0;
-  border: 2px solid #334155;
-  color: #0b1f44;
-}
-
 .list {
   list-style: none;
   padding: 0;
@@ -1035,134 +622,6 @@ input[type="checkbox"] {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-}
-
-/* ----------------------------- */
-/* Interactive micro-interactions */
-/* ----------------------------- */
-
-/* Prefer reduced motion: minimize transforms/animations */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Cards: subtle lift and accent on hover */
-.card {
-  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
-}
-.card:hover {
-  transform: translateY(-3px);
-  border-color: var(--space-border);
-  box-shadow: 0 35px 70px rgba(9, 2, 21, 0.65);
-}
-
-/* Sidebar brand: slight emphasis on hover */
-.sidebar__brand {
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-.sidebar__brand:hover {
-  transform: translateY(-1px);
-}
-
-/* Sidebar links: clearer focus outline */
-.sidebar__link {
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-.sidebar__link:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(230, 183, 5, 0.45) inset;
-}
-
-/* Buttons: stronger focus ring and press effect */
-.btn {
-  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-}
-.btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(230, 183, 5, 0.35);
-}
-.btn:active {
-  transform: translateY(1px) scale(0.99);
-}
-
-/* Quick links: animate icon and label */
-.quick-link {
-  transition: transform 0.25s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.25s ease;
-}
-.quick-link:hover {
-  transform: translateY(-2px);
-}
-.quick-link__icon,
-.quick-link__label {
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-.quick-link:hover .quick-link__icon {
-  transform: translateY(-2px) scale(1.03);
-}
-
-/* Group cards: value emphasis on hover */
-.group-card {
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
-}
-.group-card--link:hover .group-card__value strong {
-  transition: transform 0.2s ease;
-  transform: scale(1.02);
-}
-
-/* Modal: animated entrance */
-.modal-backdrop {
-  animation: fadeIn 160ms ease-out;
-}
-.modal-card {
-  animation: popIn 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes popIn {
-  from { opacity: 0; transform: translateY(4px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* FAQ: clickable affordance and smooth open */
-.faq-list details {
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-}
-.faq-list summary {
-  position: relative;
-  padding-right: 1.4rem;
-}
-.faq-list summary::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 50%;
-  width: 10px;
-  height: 10px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: translateY(-60%) rotate(45deg);
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  opacity: 0.8;
-}
-.faq-list details[open] summary::after {
-  transform: translateY(-40%) rotate(-135deg);
-}
-
-/* Inputs/selects: hover border feedback */
-.input:hover,
-.select:hover,
-.textarea:hover,
-input:not([type="checkbox"]):not([type="radio"]):hover,
-select:not(.select):hover,
-textarea:not(.textarea):hover {
-  border-color: var(--space-border);
 }
 
 .pill {
@@ -1525,20 +984,19 @@ textarea:not(.textarea):hover {
 
 /* Contrast fixes: ensure readable button text on dark surfaces */
 /* Ghost buttons on the dark app shell should use white text */
-[data-theme="dark"] .app-shell .btn-ghost {
+.app-shell .btn-ghost {
   color: #fff;
   border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Preserve dark text for ghost buttons inside light modals */
-/* Ghost buttons inside modals follow current theme variables */
 .modal-card .btn-ghost {
-  color: var(--text-primary);
-  border-color: var(--space-border);
+  color: #0f172a;
+  border-color: #cbd5e1;
 }
 
 /* Ensure any plain buttons in the dark shell are readable */
-[data-theme="dark"] .app-shell .btn {
+.app-shell .btn {
   color: #fff;
 }
 
@@ -1580,8 +1038,7 @@ textarea:not(.textarea):hover {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  /* Darker, consistent overlay for all themes */
-  background: rgba(9, 2, 21, 0.8);
+  background: rgba(15, 23, 42, 0.55);
   display: grid;
   place-items: center;
   padding: 1rem;
@@ -1589,15 +1046,13 @@ textarea:not(.textarea):hover {
 }
 
 .modal-card {
-  width: min(520px, 100%);
-  background: var(--space-panel);
+  width: min(420px, 100%);
+  background: #fff;
   border-radius: 1rem;
   padding: 1.5rem;
   display: grid;
   gap: 1rem;
-  border: 1px solid var(--space-border);
-  color: var(--text-primary);
-  box-shadow: 0 30px 60px rgba(9, 2, 21, 0.65);
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.25);
 }
 
 .modal-actions {
@@ -1730,28 +1185,15 @@ textarea:not(.textarea):hover {
   gap: 0.8rem;
 }
 
-[data-theme="light"] .faq-list details {
+.faq-list details {
   border: 1px solid #e2e8f0;
   border-radius: 0.85rem;
   padding: 1rem 1.25rem;
   background: #f8fafc;
 }
 
-[data-theme="light"] .faq-list summary {
+.faq-list summary {
   font-weight: 600;
-  cursor: pointer;
-}
-
-/* Color Blind theme: high contrast FAQ items */
-[data-theme="colorblind"] .faq-list details {
-  border: 2px solid #334155;
-  border-radius: 0.85rem;
-  padding: 1rem 1.25rem;
-  background: #fff9d9;
-}
-[data-theme="colorblind"] .faq-list summary {
-  font-weight: 700;
-  color: #0b1f44;
   cursor: pointer;
 }
 
@@ -1821,7 +1263,6 @@ textarea:not(.textarea):hover {
   gap: 1rem;
   flex-wrap: wrap;
   align-items: flex-start;
-  margin-bottom: 40px;
 }
 
 @media (max-width: 960px) {

@@ -14,12 +14,6 @@ import Notifications from "./pages/Notifications.jsx";
 import Faq from "./pages/Faq.jsx";
 import Callback from "./pages/Callback.jsx";
 import "./index.css";
-
-// Initialize theme before app renders to avoid flash
-const storedTheme = localStorage.getItem("theme");
-const allowedThemes = new Set(["dark", "light", "colorblind"]);
-const initialTheme = allowedThemes.has(storedTheme) ? storedTheme : "dark";
-document.documentElement.setAttribute("data-theme", initialTheme);
 import SignUp from "./pages/SignUp.jsx";
 import Protected from "./Protected.jsx";
 import AppLayout from "./layouts/AppLayout.jsx";
