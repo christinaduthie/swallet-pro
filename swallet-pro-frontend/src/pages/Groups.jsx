@@ -40,47 +40,82 @@ export default function Groups() {
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 900, margin: "0 auto" }}>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <h1>Groups</h1>
-        <div style={{ display:"flex", gap: 8 }}>
-          <button onClick={() => setShowNew(true)}>+ New Group</button>
-          <button onClick={seed}>Seed Demo</button>
-        </div>
-      </div>
-
-      {err && <div style={{ color:"#b91c1c" }}>{err}</div>}
-
-      <div style={{ display:"grid", gap:12, marginTop:16 }}>
-        {groups.map(g => (
-          <div key={g.id} style={{ border:"1px solid #e5e7eb", borderRadius:12, padding:16, cursor:"pointer" }}
-               onClick={() => nav(`/groups/${g.id}`)}>
-            <div style={{ fontWeight:600 }}>{g.name}</div>
-            <div style={{ fontSize:14, opacity:.7 }}>
-              Paid total: {(g.paid_cents/100).toLocaleString(undefined,{style:"currency",currency:g.currency})}
-            </div>
+    <div className="page-stack">
+      <section className="card">
+        <div className="page-header-sm">
+          <div>
+            <p className="eyebrow">Groups</p>
+            <h2 style={{ margin: 0 }}>Shared spaces</h2>
+            <p className="muted">
+              Organize trips, households, or side projects. Everything stays in sync.
+            </p>
           </div>
-        ))}
-        {groups.length === 0 && <div>No groups yet.</div>}
-      </div>
+          <div className="header-actions">
+            <button className="btn btn-primary" onClick={() => setShowNew(true)}>
+              + New group
+            </button>
+            <button className="btn btn-ghost" onClick={seed}>
+              Seed demo
+            </button>
+          </div>
+        </div>
+
+        {err && <div style={{ color: "#b91c1c", marginTop: "1rem" }}>{err}</div>}
+
+        <div className="group-grid" style={{ marginTop: "1.5rem" }}>
+          {groups.map((g) => (
+            <div key={g.id} className="group-card group-card--link" onClick={() => nav(`/groups/${g.id}`)}>
+              <div>
+                <strong>{g.name}</strong>
+                <p className="muted">Currency: {g.currency}</p>
+              </div>
+              <div className="group-card__value">
+                <span>Paid total</span>
+                <strong>
+                  {(g.paid_cents / 100).toLocaleString(undefined, {
+                    style: "currency",
+                    currency: g.currency,
+                  })}
+                </strong>
+              </div>
+            </div>
+          ))}
+          {groups.length === 0 && <p className="muted">No groups yet.</p>}
+        </div>
+      </section>
 
       {showNew && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.4)", display:"grid", placeItems:"center" }}>
-          <form onSubmit={createGroup} style={{ background:"#fff", padding:20, borderRadius:12, width:360, display:"grid", gap:12 }}>
-            <h3 style={{ margin:0 }}>Create Group</h3>
-            <label>
-              Name
-              <input value={form.name} onChange={e=>setForm(s=>({...s, name:e.target.value}))} required style={{ width:"100%" }}/>
+        <div className="modal-backdrop" role="dialog" aria-modal="true">
+          <form className="modal-card" onSubmit={createGroup}>
+            <h3 style={{ margin: 0 }}>Create group</h3>
+            <label className="form-field">
+              <span>Name</span>
+              <input
+                className="input"
+                value={form.name}
+                onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
+                required
+              />
             </label>
-            <label>
-              Currency
-              <select value={form.currency} onChange={e=>setForm(s=>({...s, currency:e.target.value}))}>
-                <option>USD</option><option>EUR</option><option>INR</option>
+            <label className="form-field">
+              <span>Currency</span>
+              <select
+                className="select"
+                value={form.currency}
+                onChange={(e) => setForm((s) => ({ ...s, currency: e.target.value }))}
+              >
+                <option>USD</option>
+                <option>EUR</option>
+                <option>INR</option>
               </select>
             </label>
-            <div style={{ display:"flex", gap:8, justifyContent:"flex-end" }}>
-              <button type="button" onClick={()=>setShowNew(false)}>Cancel</button>
-              <button type="submit">Create</button>
+            <div className="modal-actions">
+              <button type="button" className="btn btn-ghost" onClick={() => setShowNew(false)}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Create
+              </button>
             </div>
           </form>
         </div>

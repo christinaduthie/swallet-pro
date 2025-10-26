@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
-import Profile from "../components/Profile.jsx";
-import LogoutButton from "../components/LogoutButton.jsx";
 import { api } from "../api";
 
 export default function Dashboard() {
@@ -73,94 +71,50 @@ export default function Dashboard() {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div style={{ padding: "2rem", maxWidth: 600, margin: "auto", color: "#fff" }}>
-      <h1>Dashboard</h1>
+    <div className="simple-dashboard">
+      <section className="card">
+        <h1 className="simple-dashboard__title">Dashboard</h1>
+        <form className="simple-dashboard__form" onSubmit={createGroup}>
+          <h3>Create a New Group</h3>
+          <div className="simple-dashboard__fields">
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Group name"
+              required
+              className="input"
+            />
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="select"
+            >
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="INR">INR</option>
+            </select>
+            <button type="submit" className="btn btn-primary">
+              Add Group
+            </button>
+          </div>
+        </form>
 
-      {/* Group Creation Form */}
-      <form
-        onSubmit={createGroup}
-        style={{
-          marginTop: "1rem",
-          padding: "1rem",
-          background: "#222",
-          borderRadius: "8px",
-        }}
-      >
-        <h3>Create a New Group</h3>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Group name"
-          required
-          style={{
-            padding: "0.5rem",
-            marginRight: "0.5rem",
-            borderRadius: "4px",
-            border: "1px solid #555",
-            width: "60%",
-          }}
-        />
-        <select
-          value={currency}
-          onChange={(e) => setCurrency(e.target.value)}
-          style={{
-            padding: "0.5rem",
-            marginRight: "0.5rem",
-            borderRadius: "4px",
-            border: "1px solid #555",
-          }}
-        >
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-          <option value="INR">INR</option>
-        </select>
-        <button
-          type="submit"
-          style={{
-            padding: "0.5rem 1rem",
-            background: "#28a745",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          Add Group
-        </button>
-      </form>
-
-      {/* Group List */}
-      <div style={{ marginTop: "2rem" }}>
-        <h2>My Groups</h2>
-        {groups.length === 0 ? (
-          <p>No groups yet. Try creating one!</p>
-        ) : (
-          <ul>
-            {groups.map((g) => (
-              <li key={g.id} style={{ marginBottom: "0.5rem" }}>
-                <strong>{g.name}</strong> — Currency: {g.currency} | Paid: $
-                {(g.paid_cents / 100).toFixed(2)}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-      <LogoutButton />
+        <div className="simple-dashboard__list">
+          <h2>My Groups</h2>
+          {groups.length === 0 ? (
+            <p className="muted">No groups yet. Try creating one!</p>
+          ) : (
+            <ul>
+              {groups.map((g) => (
+                <li key={g.id}>
+                  <strong>{g.name}</strong> — Currency: {g.currency} | Paid: $
+                  {(g.paid_cents / 100).toFixed(2)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
     </div>
-    // <div
-    //   style={{
-    //     minHeight: "100vh",
-    //     display: "grid",
-    //     placeItems: "center",
-    //     padding: 24,
-    //     gap: 24,
-    //   }}
-    // >
-    //   <div style={{ display: "grid", gap: 16, justifyItems: "center" }}>
-    //     <h1 style={{ margin: 0 }}>Dashboard</h1>
-    //     <Profile />
-    //     <LogoutButton />
-    //   </div>
-    // </div>
   );
 }
