@@ -1,17 +1,10 @@
-import 'dotenv/config';
-import Fastify from 'fastify';
-import cors from '@fastify/cors';
-import { Pool } from 'pg';
-import * as jose from 'jose';
-import bcrypt from 'bcryptjs';
+import "dotenv/config";
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import { Pool } from "pg";
+import bcrypt from "bcryptjs";
 
-const {
-  PORT = 4000,
-  DATABASE_URL,
-  AUTH0_DOMAIN,
-  AUTH0_AUDIENCE,
-  MOCK_AUTH = 'true'
-} = process.env;
+const { PORT = 4000, DATABASE_URL } = process.env;
 
 const app = Fastify({ logger: false });
 await app.register(cors, { origin: true });
@@ -28,83 +21,62 @@ async function db(q, params = []) {
   }
 }
 
-/* ---------- Auth (Auth0 or mock) ---------- */
-async function verifyAuth0JWT(token) {
-  const JWKS = jose.createRemoteJWKSet(
-    new URL(`https://${AUTH0_DOMAIN}/.well-known/jwks.json`)
-  );
-  const { payload } = await jose.jwtVerify(token, JWKS, {
-    audience: AUTH0_AUDIENCE,
-    issuer: `https://${AUTH0_DOMAIN}/`
-  });
-  return payload; // sub, email (if scope), etc.
-}
-
+/* ---------- Auth (simple dev token) ---------- */
 // Public routes that should bypass auth hook
 const PUBLIC_PATHS = [
-  '/api/health',
-  '/api/signup',
-  '/api/login',
-  '/api/public'
+  "/api/health",
+  "/api/signup",
+  "/api/login",
+  "/api/public",
 ];
 
-app.addHook('onRequest', async (req, reply) => {
-  if (PUBLIC_PATHS.some(p => req.url.startsWith(p))) return;
+app.addHook("onRequest", async (req, reply) => {
+  if (PUBLIC_PATHS.some((p) => req.url.startsWith(p))) return;
 
   const auth = req.headers.authorization;
-  if (!auth || !auth.startsWith('Bearer ')) {
-    reply.code(401).send({ message: 'Unauthorized' });
+  if (!auth || !auth.startsWith("Bearer ")) {
+    reply.code(401).send({ message: "Unauthorized" });
     return;
   }
-  const token = auth.slice('Bearer '.length);
+  const token = auth.slice("Bearer ".length);
+
+  const [prefix, email] = token.split("|");
+  if (prefix !== "fake" || !email) {
+    reply.code(401).send({ message: "Unauthorized" });
+    return;
+  }
 
   try {
-    if (MOCK_AUTH === 'true') {
-      // mock format: "fake|email@example.com"
-      const parts = token.split('|');
-      const email = parts[1] || 'user@example.com';
-      const u = await db(
-        `INSERT INTO users (email, display_name)
-         VALUES ($1,$2)
-         ON CONFLICT (email) DO UPDATE SET display_name = COALESCE(users.display_name,$2)
-         RETURNING id,email,display_name`,
-        [email, email.split('@')[0]]
-      );
-      req.user = { id: u.rows[0].id, email: u.rows[0].email };
-    } else {
-      const payload = await verifyAuth0JWT(token);
-      const email = payload.email || `${payload.sub}@noemail.local`;
-      const sub = payload.sub;
-      const u = await db(
-        `INSERT INTO users (auth_sub,email,display_name)
-         VALUES ($1,$2,$3)
-         ON CONFLICT (auth_sub) DO UPDATE SET email=EXCLUDED.email
-         RETURNING id,email`,
-        [sub, email, email.split('@')[0]]
-      );
-      req.user = { id: u.rows[0].id, email: u.rows[0].email, sub };
-    }
+    const displayName = email.split("@")[0];
+    const u = await db(
+      `INSERT INTO users (email, display_name)
+       VALUES ($1,$2)
+       ON CONFLICT (email) DO UPDATE SET display_name = COALESCE(users.display_name,$2)
+       RETURNING id,email,display_name`,
+      [email, displayName]
+    );
+    req.user = { id: u.rows[0].id, email: u.rows[0].email };
   } catch (e) {
-    reply.code(401).send({ message: 'Unauthorized', error: e.message });
+    reply.code(401).send({ message: "Unauthorized", error: e.message });
   }
 });
 
 /* ---------- Public: health ---------- */
-app.get('/api/health', async () => {
-  await db('SELECT 1');
+app.get("/api/health", async () => {
+  await db("SELECT 1");
   return { ok: true };
 });
 
 /* ---------- Public: Sign Up (hackathon local auth) ---------- */
-app.post('/api/signup', async (req, reply) => {
+app.post("/api/signup", async (req, reply) => {
   const { email, password, display_name } = req.body || {};
   if (!email || !password) {
-    return reply.code(400).send({ message: 'email and password required' });
+    return reply.code(400).send({ message: "email and password required" });
   }
 
   const exists = await db(`SELECT id FROM users WHERE email=$1`, [email]);
   if (exists.rowCount > 0) {
-    return reply.code(409).send({ message: 'account already exists' });
+    return reply.code(409).send({ message: "account already exists" });
   }
 
   const hash = await bcrypt.hash(password, 10);
@@ -112,7 +84,7 @@ app.post('/api/signup', async (req, reply) => {
     `INSERT INTO users (email, display_name, password_hash)
      VALUES ($1,$2,$3)
      RETURNING id,email,display_name`,
-    [email, display_name || email.split('@')[0], hash]
+    [email, display_name || email.split("@")[0], hash]
   );
 
   // return a dev token compatible with the mock auth hook
@@ -120,20 +92,23 @@ app.post('/api/signup', async (req, reply) => {
 });
 
 /* ---------- Public: Login (hackathon local auth) ---------- */
-app.post('/api/login', async (req, reply) => {
+app.post("/api/login", async (req, reply) => {
   const { email, password } = req.body || {};
   if (!email || !password) {
-    return reply.code(400).send({ message: 'email and password required' });
+    return reply.code(400).send({ message: "email and password required" });
   }
 
-  const r = await db(`SELECT id,email,password_hash FROM users WHERE email=$1`, [email]);
+  const r = await db(
+    `SELECT id,email,password_hash FROM users WHERE email=$1`,
+    [email]
+  );
   if (r.rowCount === 0) {
     // allow quickstart: auto-create user without password (dev only)
     await db(
       `INSERT INTO users (email, display_name)
        VALUES ($1,$2)
        ON CONFLICT (email) DO NOTHING`,
-      [email, email.split('@')[0]]
+      [email, email.split("@")[0]]
     );
     return { token: `fake|${email}` };
   }
@@ -145,13 +120,13 @@ app.post('/api/login', async (req, reply) => {
   }
 
   const ok = await bcrypt.compare(password, password_hash);
-  if (!ok) return reply.code(401).send({ message: 'invalid credentials' });
+  if (!ok) return reply.code(401).send({ message: "invalid credentials" });
 
   return { token: `fake|${email}` };
 });
 
 /* ---------- Groups ---------- */
-app.get('/api/groups', async () => {
+app.get("/api/groups", async () => {
   const r = await db(
     `SELECT g.id, g.name, g.currency,
             COALESCE(SUM(CASE WHEN t.status='paid' THEN t.amount_cents ELSE 0 END),0) AS paid_cents
@@ -163,9 +138,9 @@ app.get('/api/groups', async () => {
   return r.rows;
 });
 
-app.post('/api/groups', async (req, reply) => {
-  const { name, currency = 'USD' } = req.body || {};
-  if (!name) return reply.code(400).send({ message: 'name required' });
+app.post("/api/groups", async (req, reply) => {
+  const { name, currency = "USD" } = req.body || {};
+  if (!name) return reply.code(400).send({ message: "name required" });
 
   const g = await db(
     `INSERT INTO groups (name,currency) VALUES ($1,$2) RETURNING id,name,currency`,
@@ -182,10 +157,13 @@ app.post('/api/groups', async (req, reply) => {
   return g.rows[0];
 });
 
-app.get('/api/groups/:id', async (req, reply) => {
+app.get("/api/groups/:id", async (req, reply) => {
   const { id } = req.params;
-  const g = await db(`SELECT id,name,currency,created_at FROM groups WHERE id=$1`, [id]);
-  if (g.rowCount === 0) return reply.code(404).send({ message: 'not found' });
+  const g = await db(
+    `SELECT id,name,currency,created_at FROM groups WHERE id=$1`,
+    [id]
+  );
+  if (g.rowCount === 0) return reply.code(404).send({ message: "not found" });
   const m = await db(
     `SELECT gm.user_id as id, u.email, gm.role
      FROM group_members gm
@@ -196,17 +174,17 @@ app.get('/api/groups/:id', async (req, reply) => {
   return { ...g.rows[0], members: m.rows };
 });
 
-app.post('/api/groups/:id/members', async (req, reply) => {
+app.post("/api/groups/:id/members", async (req, reply) => {
   const { id } = req.params;
-  const { email, role = 'member' } = req.body || {};
-  if (!email) return reply.code(400).send({ message: 'email required' });
+  const { email, role = "member" } = req.body || {};
+  if (!email) return reply.code(400).send({ message: "email required" });
 
   const u = await db(
     `INSERT INTO users (email, display_name)
      VALUES ($1,$2)
      ON CONFLICT (email) DO UPDATE SET display_name = COALESCE(users.display_name,$2)
      RETURNING id`,
-    [email, email.split('@')[0]]
+    [email, email.split("@")[0]]
   );
 
   await db(
@@ -219,7 +197,7 @@ app.post('/api/groups/:id/members', async (req, reply) => {
 });
 
 /* ---------- Ledger / Transactions ---------- */
-app.get('/api/groups/:id/ledger', async (req, reply) => {
+app.get("/api/groups/:id/ledger", async (req, reply) => {
   const { id } = req.params;
   const r = await db(
     `SELECT t.id, t.type, t.amount_cents, t.description, t.status, t.created_at,
@@ -233,17 +211,20 @@ app.get('/api/groups/:id/ledger', async (req, reply) => {
   return r.rows;
 });
 
-app.post('/api/transactions', async (req, reply) => {
+app.post("/api/transactions", async (req, reply) => {
   const { group_id, type, amount_cents, description } = req.body || {};
   if (!group_id || !type || !amount_cents) {
-    return reply.code(400).send({ message: 'group_id, type, amount_cents required' });
+    return reply
+      .code(400)
+      .send({ message: "group_id, type, amount_cents required" });
   }
 
   const mem = await db(
     `SELECT 1 FROM group_members WHERE group_id=$1 AND user_id=$2`,
     [group_id, req.user.id]
   );
-  if (mem.rowCount === 0) return reply.code(403).send({ message: 'not a member' });
+  if (mem.rowCount === 0)
+    return reply.code(403).send({ message: "not a member" });
 
   const r = await db(
     `INSERT INTO transactions (group_id,type,amount_cents,description,status,created_by)
@@ -254,11 +235,11 @@ app.post('/api/transactions', async (req, reply) => {
 });
 
 /* ---------- Approvals ---------- */
-app.post('/api/approvals/:txId', async (req, reply) => {
+app.post("/api/approvals/:txId", async (req, reply) => {
   const { txId } = req.params;
   const { decision } = req.body || {};
-  if (!['approve', 'reject'].includes(decision)) {
-    return reply.code(400).send({ message: 'decision must be approve|reject' });
+  if (!["approve", "reject"].includes(decision)) {
+    return reply.code(400).send({ message: "decision must be approve|reject" });
   }
 
   await db(
@@ -277,7 +258,7 @@ app.post('/api/approvals/:txId', async (req, reply) => {
     [txId]
   );
   const approves = Number(r.rows[0].approves || 0);
-  const rejects  = Number(r.rows[0].rejects  || 0);
+  const rejects = Number(r.rows[0].rejects || 0);
 
   if (rejects > 0) {
     await db(`UPDATE transactions SET status='rejected' WHERE id=$1`, [txId]);
@@ -291,7 +272,7 @@ app.post('/api/approvals/:txId', async (req, reply) => {
 });
 
 /* ---------- Comments (optional) ---------- */
-app.get('/api/transactions/:id/comments', async (req) => {
+app.get("/api/transactions/:id/comments", async (req) => {
   const { id } = req.params;
   const r = await db(
     `SELECT c.id, c.body, c.created_at, u.email AS author
@@ -302,10 +283,10 @@ app.get('/api/transactions/:id/comments', async (req) => {
   return r.rows;
 });
 
-app.post('/api/transactions/:id/comments', async (req, reply) => {
+app.post("/api/transactions/:id/comments", async (req, reply) => {
   const { id } = req.params;
   const { body } = req.body || {};
-  if (!body) return reply.code(400).send({ message: 'body required' });
+  if (!body) return reply.code(400).send({ message: "body required" });
   await db(
     `INSERT INTO comments (transaction_id, author_id, body)
      VALUES ($1,$2,$3)`,
@@ -315,6 +296,10 @@ app.post('/api/transactions/:id/comments', async (req, reply) => {
 });
 
 /* ---------- start ---------- */
-app.listen({ port: Number(PORT), host: '0.0.0.0' })
+app
+  .listen({ port: Number(PORT), host: "0.0.0.0" })
   .then(() => console.log(`API on http://localhost:${PORT}`))
-  .catch((e) => { console.error(e); process.exit(1); });
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
