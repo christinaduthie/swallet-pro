@@ -168,6 +168,14 @@ export default function AppLayout() {
       audioRef.current = null;
     }
   }
+  const [theme, setTheme] = useState(document.documentElement.getAttribute("data-theme") || "dark");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const handleThemeChange = (e) => setTheme(e.target.value);
 
   return (
     <div className="app-shell">
@@ -180,7 +188,6 @@ export default function AppLayout() {
           </div>
         </Link>
 
-        <div className="sidebar__badge">Sponsor Mode</div>
 
         <div className="sidebar__constellation" aria-hidden="true">
           <span />
@@ -226,7 +233,7 @@ export default function AppLayout() {
       <div className="app-main">
         <header className="app-header">
           <div className="header-primary">
-            <p className="eyebrow">Swallet HQ</p>
+            <p className="eyebrow">Swallet Pro</p>
             <h1>Welcome back{user?.given_name ? `, ${user.given_name}` : ""}</h1>
             <p>Monitor balances, manage crews, and keep every split under control.</p>
           </div>
@@ -234,6 +241,17 @@ export default function AppLayout() {
           <div className="header-actions">
             <button type="button" className="btn btn-primary btn-sm" onClick={handleSpeak}>Start</button>
             <button type="button" className="btn btn-ghost btn-sm" onClick={handleStop}>Stop</button>
+            <select
+              aria-label="Theme selector"
+              value={theme}
+              onChange={handleThemeChange}
+              className="select"
+              style={{ width: "auto" }}
+            >
+              <option value="dark">Dark Mode</option>
+              <option value="light">Light Mode</option>
+              <option value="colorblind">Color Blind Mode</option>
+            </select>
             <div className="quick-links quick-links--icons">
               {quickLinks.map((link) => (
                 <Link key={link.to} to={link.to} className="quick-link">

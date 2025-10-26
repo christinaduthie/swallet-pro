@@ -219,70 +219,80 @@ export default function Dashboard() {
 
   return (
     <div className="page-stack">
-      <section className="card">
-        <div className="page-header-sm">
-          <div>
-            <p className="eyebrow">Secure Overview</p>
-            <h2 style={{ margin: 0 }}>Check balances at a glance</h2>
-            <p className="muted">Toggle to reveal totals across every linked source.</p>
-          </div>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => setShowBalance((s) => !s)}
-          >
-            {showBalance ? "Hide amounts" : "Show amounts"}
-          </button>
-        </div>
-
-        <div className="stat-grid" style={{ marginTop: "1.5rem" }}>
-          {totalCards.map((card) => (
-            <div key={card.label} className="stat-card">
-              <h3>{card.label}</h3>
-              <strong>{maskedValue(card.value)}</strong>
+      <div className="card-grid card-grid--2">
+        <section className="card">
+          <div className="page-header-sm">
+            <div>
+              <p className="eyebrow">Secure Overview</p>
+              <h2 style={{ margin: 0 }}>Check balances at a glance</h2>
+              <p className="muted">Toggle to reveal totals across every linked source.</p>
             </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="card">
-        <div className="page-header-sm">
-          <div>
-            <p className="eyebrow">Quick Actions</p>
-            <h2 style={{ margin: 0 }}>Move faster with shortcuts</h2>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setShowBalance((s) => !s)}
+            >
+              {showBalance ? "Hide amounts" : "Show amounts"}
+            </button>
           </div>
-        </div>
-        <div className="quick-links">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => navigate("/groups")}
-          >
-            Create Group
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={() => navigate("/groups")}
-          >
-            New Request
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={() => navigate("/accounts")}
-          >
-            Add Account
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={() => navigate("/people")}
-          >
-            Invite Contact
-          </button>
-        </div>
-      </section>
+
+          <div className="stat-grid" style={{ marginTop: "1.5rem" }}>
+            {totalCards.map((card) => (
+              <div key={card.label} className="stat-card">
+                <h3>{card.label}</h3>
+                <strong>{maskedValue(card.value)}</strong>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="card">
+          <div className="page-header-sm">
+            <div>
+              <p className="eyebrow">Quick Actions</p>
+              <h2 style={{ margin: 0 }}>Move faster with shortcuts</h2>
+            </div>
+          </div>
+          <div className="quick-links quick-links--icons" style={{ justifyContent: "flex-start" }}>
+            <button type="button" className="quick-link" onClick={() => navigate("/groups")}
+              aria-label="Create Group">
+              <span className="quick-link__icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm-6 7v-1c0-2.21 3.58-3 6-3s6 .79 6 3v1H6Z"/>
+                </svg>
+              </span>
+              <span className="quick-link__label">Create Group</span>
+            </button>
+            <button type="button" className="quick-link" onClick={() => navigate("/groups")}
+              aria-label="New Request">
+              <span className="quick-link__icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2Zm1 11h4v2h-6V7h2Z"/>
+                </svg>
+              </span>
+              <span className="quick-link__label">New Request</span>
+            </button>
+            <button type="button" className="quick-link" onClick={() => navigate("/accounts")}
+              aria-label="Add Account">
+              <span className="quick-link__icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 6h16v2H4v12h16v-7h-6a3 3 0 0 1-3-3V6H4Zm9 0v4a1 1 0 0 0 1 1h6V6h-7Z"/>
+                </svg>
+              </span>
+              <span className="quick-link__label">Add Account</span>
+            </button>
+            <button type="button" className="quick-link" onClick={() => navigate("/people")}
+              aria-label="Invite Contact">
+              <span className="quick-link__icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm7 1h-2v2h-2v2h2v2h2v-2h2v-2h-2Z"/>
+                </svg>
+              </span>
+              <span className="quick-link__label">Invite Contact</span>
+            </button>
+          </div>
+        </section>
+      </div>
 
       <section className="card">
         <div className="page-header-sm">
@@ -430,4 +440,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
