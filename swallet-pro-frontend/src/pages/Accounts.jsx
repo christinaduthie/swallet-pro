@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { accountsAPI } from "../api";
+import CryptoJS from "crypto-js";
 
 const ACCOUNT_TYPES = [
   { value: "checking", label: "Checking" },
@@ -62,7 +63,9 @@ export default function Accounts() {
     setSubmitting(true);
     setError("");
     try {
-      await accountsAPI.create(form);
+      // Basic encryption for account name
+      const encryptedName = CryptoJS.AES.encrypt(form.institution_name, "swallet-basic-key").toString();
+      await accountsAPI.create({ ...form, institution_name: encryptedName });
       setForm({
         institution_name: "",
         account_type: "checking",
