@@ -178,6 +178,8 @@ export default function AppLayout() {
           </div>
 
           <div className="header-actions">
+            <button type="button" className="btn btn-primary btn-sm">Start</button>
+            <button type="button" className="btn btn-ghost btn-sm">Stop</button>
             <div className="quick-links quick-links--icons">
               {quickLinks.map((link) => (
                 <Link key={link.to} to={link.to} className="quick-link">

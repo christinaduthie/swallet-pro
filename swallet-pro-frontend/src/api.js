@@ -70,7 +70,7 @@ export const api = {
 
 // 🏠 Dashboard
 export const dashboardAPI = {
-  getSummary: () => api.get("/groups"), // recent balances / active groups
+  getSummary: () => api.get("/dashboard"),
 };
 
 // 👥 Groups
@@ -78,9 +78,25 @@ export const groupsAPI = {
   getAll: () => api.get("/groups"),
   getById: (id) => api.get(`/groups/${id}`),
   create: (data) => api.post("/groups", data),
-  addMember: (groupId, email, role = "member") =>
-    api.post(`/groups/${groupId}/members`, { email, role }),
-  getLedger: (groupId) => api.get(`/groups/${groupId}/ledger`),
+  updatePolicies: (id, payload) =>
+    api.put(`/groups/${id}/policies`, payload),
+  addMember: (groupId, payload) =>
+    api.post(`/groups/${groupId}/members`, payload),
+  updateMember: (groupId, memberId, payload) =>
+    api.put(`/groups/${groupId}/members/${memberId}`, payload),
+  removeMember: (groupId, memberId) =>
+    api.del(`/groups/${groupId}/members/${memberId}`),
+  getLedger: (groupId, params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const suffix = query ? `?${query}` : "";
+    return api.get(`/groups/${groupId}/ledger${suffix}`);
+  },
+  getRequests: (groupId) => api.get(`/groups/${groupId}/requests`),
+  getApprovals: (groupId) => api.get(`/groups/${groupId}/approvals`),
+  getActivity: (groupId) => api.get(`/groups/${groupId}/activity`),
+  getReports: (groupId) => api.get(`/groups/${groupId}/reports`),
+  createRequest: (groupId, payload) =>
+    api.post(`/groups/${groupId}/requests`, payload),
 };
 
 // 💸 Transactions
@@ -98,14 +114,26 @@ export const approvalsAPI = {
 
 // 💳 Accounts
 export const accountsAPI = {
-  getByUser: (userId) => api.get(`/accounts/${userId}`),
+  list: () => api.get("/accounts"),
+  create: (payload) => api.post("/accounts", payload),
+  update: (id, payload) => api.put(`/accounts/${id}`, payload),
+  remove: (id) => api.del(`/accounts/${id}`),
+  setDefault: (id) => api.post(`/accounts/${id}/default`),
 };
 
 // 🧑‍🤝‍🧑 Contacts
 export const contactsAPI = {
-  getAll: () => api.get("/contacts"),
+  getAll: (search) => {
+    if (search) {
+      return api.get(`/contacts?search=${encodeURIComponent(search)}`);
+    }
+    return api.get("/contacts");
+  },
   add: (contact_name, contact_email) =>
     api.post("/contacts", { contact_name, contact_email }),
+  update: (id, payload) => api.put(`/contacts/${id}`, payload),
+  remove: (id) => api.del(`/contacts/${id}`),
+  insights: (id) => api.get(`/contacts/${id}/insights`),
 };
 
 // 🔔 Notifications

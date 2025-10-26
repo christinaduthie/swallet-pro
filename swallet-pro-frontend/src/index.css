@@ -273,6 +273,14 @@ p {
   min-width: 260px;
 }
 
+/* Place header icons to the far right of the header */
+.app-header .header-actions {
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .quick-links {
   display: flex;
   gap: 0.75rem;
@@ -284,6 +292,32 @@ p {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+/* Header button refinements: compact, subtle pills */
+.app-header .header-actions .btn {
+  border-radius: 0.5rem;
+}
+
+.app-header .header-actions .btn-primary {
+  background: rgba(230, 183, 5, 0.18);
+  border-color: rgba(230, 183, 5, 0.55);
+  color: #fff;
+  box-shadow: none;
+}
+
+.app-header .header-actions .btn-primary:hover {
+  background: rgba(230, 183, 5, 0.26);
+}
+
+.app-header .header-actions .btn-ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+}
+
+.app-header .header-actions .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .quick-link {
@@ -369,9 +403,57 @@ p {
   align-self: end;
 }
 
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+}
+
+.tab {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+}
+
+.tab.is-active {
+  background: rgba(230, 183, 5, 0.18);
+  border-color: rgba(230, 183, 5, 0.6);
+}
+
+.progress {
+  width: 160px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.progress__bar {
+  height: 100%;
+  background: linear-gradient(90deg, #e6b705, #c92b98);
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  color: var(--text-primary);
+}
+
 .input,
 .select,
-.textarea {
+.textarea,
+input:not([type="checkbox"]):not([type="radio"]),
+select:not(.select),
+textarea:not(.textarea) {
   width: 100%;
   border-radius: 0.85rem;
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -384,11 +466,34 @@ p {
 
 .input:focus,
 .select:focus,
-.textarea:focus {
+.textarea:focus,
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:not(.select):focus,
+textarea:not(.textarea):focus {
   outline: none;
   border-color: var(--accent-gold);
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 0 3px rgba(230, 183, 5, 0.25);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary);
+  transition: background-color 5000s ease-in-out 0s;
+  box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--accent-gold);
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
 }
 
 .btn {
@@ -403,6 +508,13 @@ p {
   cursor: pointer;
   font-size: 0.95rem;
   transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+}
+
+/* Small button utility for compact header CTAs */
+.btn-sm {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
 }
 
 .btn:active {
@@ -559,6 +671,11 @@ p {
 
 .table tr:last-child td {
   border-bottom: none;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
 }
 
 .settings-list {
@@ -862,6 +979,24 @@ p {
 
 .btn-secondary {
   background: #0f172a;
+  color: #fff;
+}
+
+/* Contrast fixes: ensure readable button text on dark surfaces */
+/* Ghost buttons on the dark app shell should use white text */
+.app-shell .btn-ghost {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Preserve dark text for ghost buttons inside light modals */
+.modal-card .btn-ghost {
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+/* Ensure any plain buttons in the dark shell are readable */
+.app-shell .btn {
   color: #fff;
 }
 
