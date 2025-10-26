@@ -8,9 +8,11 @@ import Callback from "./pages/Callback.jsx"; // if your teammate adds it
 import Groups from "./pages/Groups.jsx";
 import GroupDetail from "./pages/GroupDetail.jsx";
 import "./index.css";
+import SignUp from "./pages/SignUp.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
+  { path: "/signup", element: <SignUp /> },   
   { path: "/dashboard", element: <Dashboard /> },
   { path: "/groups", element: <Groups /> },
   { path: "/groups/:id", element: <GroupDetail /> },
