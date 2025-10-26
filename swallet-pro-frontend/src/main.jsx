@@ -6,16 +6,45 @@ import Login from "./pages/login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Groups from "./pages/Groups.jsx";
 import GroupDetail from "./pages/GroupDetail.jsx";
+import Accounts from "./pages/Accounts.jsx";
+import People from "./pages/People.jsx";
+import MyProfile from "./pages/MyProfile.jsx";
+import Settings from "./pages/Settings.jsx";
+import Notifications from "./pages/Notifications.jsx";
+import Faq from "./pages/Faq.jsx";
+import Callback from "./pages/Callback.jsx";
 import "./index.css";
 import SignUp from "./pages/SignUp.jsx";
 import Protected from "./Protected.jsx";
+import AppLayout from "./layouts/AppLayout.jsx";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Login /> },
-  { path: "/signup", element: <SignUp /> },
-  { path: "/dashboard", element: (<Protected><Dashboard /></Protected>) },
-  { path: "/groups", element: (<Protected><Groups /></Protected>) },
-  { path: "/groups/:id", element: (<Protected><GroupDetail /></Protected>) },
+  {
+    path: "/",
+    children: [
+      { index: true, element: <Login /> },
+      { path: "signup", element: <SignUp /> },
+      { path: "callback", element: <Callback /> },
+      {
+        element: (
+          <Protected>
+            <AppLayout />
+          </Protected>
+        ),
+        children: [
+          { path: "dashboard", element: <Dashboard /> },
+          { path: "accounts", element: <Accounts /> },
+          { path: "groups", element: <Groups /> },
+          { path: "groups/:id", element: <GroupDetail /> },
+          { path: "people", element: <People /> },
+          { path: "profile", element: <MyProfile /> },
+          { path: "settings", element: <Settings /> },
+          { path: "notifications", element: <Notifications /> },
+          { path: "faq", element: <Faq /> },
+        ],
+      },
+    ],
+  },
 ]);
 
 const domain = import.meta.env.VITE_AUTH0_DOMAIN;

@@ -53,93 +53,105 @@ export default function GroupDetail() {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!group) return <p>No group found.</p>;
 
+  const formatAmount = (value = 0) =>
+    new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: group.currency || "USD",
+    }).format(value);
+
   return (
-    <div style={{ padding: "2rem", maxWidth: 600, margin: "auto", color: "#fff" }}>
-      <h1>{group.name}</h1>
-      <p>Currency: {group.currency}</p>
-      <p>Members: {group.members?.length || 0}</p>
+    <div className="page-stack">
+      <section className="card">
+        <p className="eyebrow">Group</p>
+        <h2 style={{ margin: 0 }}>{group.name}</h2>
+        <div className="stat-grid" style={{ marginTop: "1rem" }}>
+          <div className="stat-card">
+            <h3>Currency</h3>
+            <strong>{group.currency}</strong>
+            <p className="muted">Base currency for conversions.</p>
+          </div>
+          <div className="stat-card">
+            <h3>Members</h3>
+            <strong>{group.members?.length || 0}</strong>
+            <p className="muted">Actively sharing expenses.</p>
+          </div>
+          <div className="stat-card">
+            <h3>Total paid</h3>
+            <strong>{formatAmount((group.paid_cents || 0) / 100)}</strong>
+            <p className="muted">Synced from the ledger.</p>
+          </div>
+        </div>
+      </section>
 
-      {/* Add Transaction */}
-      <form
-        onSubmit={addTransaction}
-        style={{
-          marginTop: "1rem",
-          padding: "1rem",
-          background: "#222",
-          borderRadius: "8px",
-        }}
-      >
-        <h3>Add Transaction</h3>
-        <input
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="Amount"
-          type="number"
-          required
-          style={{
-            padding: "0.5rem",
-            marginRight: "0.5rem",
-            borderRadius: "4px",
-            border: "1px solid #555",
-            width: "30%",
-          }}
-        />
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          style={{
-            padding: "0.5rem",
-            marginRight: "0.5rem",
-            borderRadius: "4px",
-            border: "1px solid #555",
-          }}
-        >
-          <option value="spend">Spend</option>
-          <option value="collect">Collect</option>
-          <option value="reimburse">Reimburse</option>
-        </select>
-        <input
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
-          placeholder="Description"
-          style={{
-            padding: "0.5rem",
-            marginRight: "0.5rem",
-            borderRadius: "4px",
-            border: "1px solid #555",
-          }}
-        />
-        <button
-          type="submit"
-          style={{
-            padding: "0.5rem 1rem",
-            background: "#007bff",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          Add
-        </button>
-      </form>
+      <section className="card">
+        <p className="eyebrow">Add transaction</p>
+        <form className="form-grid" onSubmit={addTransaction}>
+          <div className="form-field">
+            <label htmlFor="amount">Amount</label>
+            <input
+              id="amount"
+              className="input"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0.00"
+              type="number"
+              min="0"
+              required
+            />
+          </div>
+          <div className="form-field">
+            <label htmlFor="type">Type</label>
+            <select
+              id="type"
+              className="select"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              <option value="spend">Spend</option>
+              <option value="collect">Collect</option>
+              <option value="reimburse">Reimburse</option>
+            </select>
+          </div>
+          <div className="form-field">
+            <label htmlFor="description">Description</label>
+            <input
+              id="description"
+              className="input"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              placeholder="Dinner at Mercado"
+            />
+          </div>
+          <div className="form-field align-end">
+            <button type="submit" className="btn btn-primary">
+              Add transaction
+            </button>
+          </div>
+        </form>
+      </section>
 
-      {/* Ledger List */}
-      <div style={{ marginTop: "2rem" }}>
-        <h2>Transactions</h2>
+      <section className="card">
+        <p className="eyebrow">Ledger</p>
+        <h2 style={{ margin: "0 0 1rem" }}>Transactions</h2>
         {ledger.length === 0 ? (
-          <p>No transactions yet.</p>
+          <p className="muted">No transactions yet.</p>
         ) : (
-          <ul>
+          <ul className="list">
             {ledger.map((t) => (
-              <li key={t.id} style={{ marginBottom: "0.5rem" }}>
-                <strong>{t.type}</strong> — ${t.amount_cents / 100} |{" "}
-                {t.description || "No description"} | {t.status}
+              <li key={t.id} className="list-item transaction-row">
+                <div>
+                  <strong style={{ textTransform: "capitalize" }}>{t.type}</strong>
+                  <p className="muted">{t.description || "No description"}</p>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <strong>{formatAmount((t.amount_cents || 0) / 100)}</strong>
+                  <p className="muted">{t.status}</p>
+                </div>
               </li>
             ))}
           </ul>
         )}
-      </div>
+      </section>
     </div>
   );
 }
