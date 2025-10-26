@@ -2,25 +2,49 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Auth0Provider } from "@auth0/auth0-react";
-import Login from "./pages/Login.jsx";
+import Login from "./pages/login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
-import Callback from "./pages/Callback.jsx";   // new
+import Groups from "./pages/Groups.jsx";
+import GroupDetail from "./pages/GroupDetail.jsx";
+import Accounts from "./pages/Accounts.jsx";
+import People from "./pages/People.jsx";
+import MyProfile from "./pages/MyProfile.jsx";
+import Settings from "./pages/Settings.jsx";
+import Notifications from "./pages/Notifications.jsx";
+import Faq from "./pages/Faq.jsx";
+import Callback from "./pages/Callback.jsx";
 import "./index.css";
-
-import { registerSW } from "virtual:pwa-register";
-registerSW({ immediate: true }); // auto update when a new SW is available
-
-// Register service worker (ignore if unsupported)
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(console.error);
-  });
-}
+import SignUp from "./pages/SignUp.jsx";
+import Protected from "./Protected.jsx";
+import AppLayout from "./layouts/AppLayout.jsx";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Login /> },
-  { path: "/dashboard", element: <Dashboard /> },   // we’ll protect inside the component
-  { path: "/callback", element: <Callback /> },     // landing after Auth0 redirect
+  {
+    path: "/",
+    children: [
+      { index: true, element: <Login /> },
+      { path: "signup", element: <SignUp /> },
+      { path: "callback", element: <Callback /> },
+      {
+        element: (
+          <Protected>
+            <AppLayout />
+          </Protected>
+        ),
+        children: [
+          { path: "dashboard", element: <Dashboard /> },
+          { path: "accounts", element: <Accounts /> },
+          { path: "groups", element: <Groups /> },
+          { path: "groups/:id", element: <GroupDetail /> },
+          { path: "people", element: <People /> },
+          { path: "profile", element: <MyProfile /> },
+          { path: "settings", element: <Settings /> },
+          { path: "notifications", element: <Notifications /> },
+          { path: "faq", element: <Faq /> },
+        ],
+      },
+    ],
+  },
 ]);
 
 const domain = import.meta.env.VITE_AUTH0_DOMAIN;
@@ -31,12 +55,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      authorizationParams={{
-        redirect_uri: `${window.location.origin}/callback`,
-        audience: import.meta.env.VITE_AUTH0_AUDIENCE, // undefined is fine if you don’t use an API
-        scope: "openid profile email",
-      }}
-      cacheLocation="localstorage"  // keeps sessions across reloads; good for dev
+      authorizationParams={{ redirect_uri: window.location.origin }}
+      cacheLocation="localstorage"
     >
       <RouterProvider router={router} />
     </Auth0Provider>
